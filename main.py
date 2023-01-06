@@ -7,17 +7,23 @@ from models.helpers import plot_pattern
 import pandas as pd
 import numpy as np
 import time
+import plotly.graph_objects as go
 
 from klines import getCSV
 
 # df = pd.read_csv('data/btc-usd_1d.csv')
 # df = pd.read_csv('data/output.csv')
 
-symbol = 'BTCUSDT'
-since = '1 Jan, 2020'
-interval = '1w'
-getCSV(sysmbol=symbol,interval=interval,since=since)
-
+# symbol = 'BTCUSDT'
+# since = '1 Jan, 2020'
+# interval = '1w'
+symbol = input("Please enter symbol: ")
+interval = input("Please enter interval(1m 3m 15m 30m 1h 2h 4h 6h 8h 12h 1d 3d 1w 1M: ")
+since = input("Please enter date: ")
+pair = 'USDT'
+getCSV(sysmbol=symbol.upper()+pair,interval=interval,since=since)
+update_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(time.time()))
+# print(update_time)
 df = pd.read_csv('testCSV.csv')
 
 print(type(df))
@@ -60,7 +66,23 @@ for new_option_impulse in wave_options_impulse.options_sorted:
                 if wavepattern_up in wavepatterns_up:
                     continue
                 else:
-                    title = rule.name+str(new_option_impulse)+"Symbol: "+str(symbol)+" Time: "+since+" to present Interval: "+interval
+                    title = rule.name+str(new_option_impulse)+"Symbol: "+str(symbol.upper()+pair)+" Time: "+since+" to present Interval: "+interval+" Update at: "+update_time+" Source: Binance Historical Market Data K-line"
                     wavepatterns_up.add(wavepattern_up)
                     print(f'{rule.name} found: {new_option_impulse.values}')
                     plot_pattern(df=df, wave_pattern=wavepattern_up, title=title)
+
+
+def plot_graph(df: pd.DataFrame):
+    data = go.Candlestick(x=df['Date'],
+                        open=df['Open'],
+                        high=df['High'],
+                        low=df['Low'],
+                        close=df['Close'])
+    title = "Symbol: "+str(symbol.upper()+pair)+" Time: "+since+" to present Interval: "+interval+" Update at: "+update_time+" Source: Binance Historical Market Data K-line"
+    layout = dict(title=title)
+    fig = go.Figure(data=[data], layout=layout)
+    fig.update(layout_xaxis_rangeslider_visible=False)
+
+    fig.show()
+
+plot_graph(df=df)
