@@ -1,5 +1,3 @@
-#binance-api-spot-price-and-historical-pirce
-
 
 Initial project: https://github.com/btcorgtfo/ElliottWaveAnalyzer
 
